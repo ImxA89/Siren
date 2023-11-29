@@ -27,6 +27,7 @@ public class Siren : MonoBehaviour
     private void Start()
     {
         _sound.volume = _minVolume;
+        _sound.Play();
     }
 
     private void OnDisable()
@@ -37,45 +38,38 @@ public class Siren : MonoBehaviour
 
     private void OnThiefDetected()
     {
-      _routineChangeVolume = StartCoroutine(IncreaseVolume());
+        IncreaseVolume();
     }
 
     private void OnThiefGone()
     {
-       _routineChangeVolume = StartCoroutine(DecreaseVolume());
+        DecreaseVolume();
     }
 
-    private IEnumerator IncreaseVolume()
+    private IEnumerator ChangeVolume(float targetVolume)
     {
         WaitForSeconds delay = new WaitForSeconds(_delayTime);
 
         if (_routineChangeVolume != null)
             StopCoroutine(_routineChangeVolume);
 
-        _sound.Play();
-
-        while (_sound.volume < _maxVolume)
+        do
         {
-            _sound.volume = Mathf.MoveTowards(_sound.volume, _maxVolume, _soundChangeSpeed);
+            _sound.volume = Mathf.MoveTowards(_sound.volume, targetVolume, _soundChangeSpeed);
 
             yield return delay;
         }
+        while (_sound.volume < _maxVolume && _sound.volume > _minVolume);
     }
 
-    private IEnumerator DecreaseVolume()
+    private void IncreaseVolume()
     {
-        WaitForSeconds delay = new WaitForSeconds(_delayTime);
 
-        if (_routineChangeVolume != null)
-            StopCoroutine(_routineChangeVolume);
+        _routineChangeVolume = StartCoroutine(ChangeVolume(_maxVolume));
+    }
 
-        while (_sound.volume > _minVolume)
-        {
-            _sound.volume = Mathf.MoveTowards(_sound.volume, _minVolume, _soundChangeSpeed);
-
-            yield return delay;
-        }
-
-        _sound.Stop();
+    private void DecreaseVolume()
+    {
+        _routineChangeVolume = StartCoroutine(ChangeVolume(_minVolume));
     }
 }
