@@ -38,12 +38,12 @@ public class Siren : MonoBehaviour
 
     private void OnThiefDetected()
     {
-        IncreaseVolume();
+        _routineChangeVolume = StartCoroutine(ChangeVolume(_maxVolume));
     }
 
     private void OnThiefGone()
     {
-        DecreaseVolume();
+        _routineChangeVolume = StartCoroutine(ChangeVolume(_minVolume));
     }
 
     private IEnumerator ChangeVolume(float targetVolume)
@@ -60,16 +60,5 @@ public class Siren : MonoBehaviour
             yield return delay;
         }
         while (_sound.volume < _maxVolume && _sound.volume > _minVolume);
-    }
-
-    private void IncreaseVolume()
-    {
-
-        _routineChangeVolume = StartCoroutine(ChangeVolume(_maxVolume));
-    }
-
-    private void DecreaseVolume()
-    {
-        _routineChangeVolume = StartCoroutine(ChangeVolume(_minVolume));
     }
 }
