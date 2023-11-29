@@ -10,7 +10,7 @@ public class Siren : MonoBehaviour
     private float _maxVolume = 1.0f;
     private float _minVolume = 0f;
     private float _delayTime = 0.3f;
-    private Coroutine _routine;
+    private Coroutine _routineChangeVolume;
 
     private void OnValidate()
     {
@@ -37,20 +37,20 @@ public class Siren : MonoBehaviour
 
     private void OnThiefDetected()
     {
-        StartCoroutine(IncreaseVolume());
+      _routineChangeVolume = StartCoroutine(IncreaseVolume());
     }
 
     private void OnThiefGone()
     {
-        StartCoroutine(DecreaseVolume());
+       _routineChangeVolume = StartCoroutine(DecreaseVolume());
     }
 
     private IEnumerator IncreaseVolume()
     {
         WaitForSeconds delay = new WaitForSeconds(_delayTime);
 
-        if (_routine != null)
-            StopCoroutine(_routine);
+        if (_routineChangeVolume != null)
+            StopCoroutine(_routineChangeVolume);
 
         _sound.Play();
 
@@ -66,8 +66,8 @@ public class Siren : MonoBehaviour
     {
         WaitForSeconds delay = new WaitForSeconds(_delayTime);
 
-        if (_routine != null)
-            StopCoroutine(_routine);
+        if (_routineChangeVolume != null)
+            StopCoroutine(_routineChangeVolume);
 
         while (_sound.volume > _minVolume)
         {
